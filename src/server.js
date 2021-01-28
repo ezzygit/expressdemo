@@ -1,12 +1,22 @@
 const express = require("express");
+const fs = require("fs");
 
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-    console.log("hiiii")
+//set up middleware function // 
+
+const myFunction = (req, res, next) => {
+    console.log("hello");
+    req.query.random = "framboise";
+    next();
+};
+
+app.get("/", myFunction, (req, res) => {
+    console.log("running controller");
+    console.log(req.query);
     res.send("Bonjour Madame");
 });
 
@@ -39,6 +49,17 @@ app.post("/", (req, res) => {
 app.post("/mail", (req, res) => {
     console.log(req.body.email);
     res.send({data: req.body});
+});
+
+
+// create post route to /task
+// send json data
+// save that task to a .txt file called tasks.txt
+// finish controller by sending back a string 'success'
+
+app.post("/task", (req, res) => {
+    fs.writeFileSync('tasks.txt', req.body.task);
+    res.send("success");
 });
 
 
